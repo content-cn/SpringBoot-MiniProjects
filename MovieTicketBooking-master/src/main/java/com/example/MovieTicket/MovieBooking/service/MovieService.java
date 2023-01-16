@@ -1,31 +1,38 @@
 package com.example.MovieTicket.MovieBooking.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 
-import com.example.MovieTicket.MovieBooking.Entity.Movie;
 import com.example.MovieTicket.MovieBooking.Exceptions.IdNotFound;
+import com.example.MovieTicket.MovieBooking.Model.Movie;
+import com.example.MovieTicket.MovieBooking.communicator.RatingRestCommunicator;
 
 @Service
 public class MovieService implements MovieServiceInterface {
 	
-	//List of Movie objects that stores local data
-	List<Movie> moviesList;
+	List<Movie> moviesList =new ArrayList<>();
+	Map<String,Movie> movieMap= new HashMap<>();
+	
+	@Autowired
+	RatingRestCommunicator ratingServiceCommunicator;
 	
 	
-	public MovieService() {
-//		super();
-	moviesList=new ArrayList<>();
-		moviesList.add(new Movie(1,"Captain America","Joe Johnston ", "6.9", "English",
-				new ArrayList<>(List.of("Christopher Markus", "Stephen McFeely","Joe Simon")),
-				new ArrayList<>(List.of("Chris Evans", "Stephen McFeely","Samuel L. Jackson")),
-				new ArrayList<>(List.of("Adventures", "Action"))
-			));
-		// TODO Auto-generated constructor stub
-	}
+//	public MovieService() {
+////		super();
+////	moviesList=new ArrayList<>();
+////		moviesList.add(new Movie(1,"Captain America","Joe Johnston ", "6.9", "English",
+////				new ArrayList<>(List.of("Christopher Markus", "Stephen McFeely","Joe Simon")),
+////				new ArrayList<>(List.of("Chris Evans", "Stephen McFeely","Samuel L. Jackson")),
+////				new ArrayList<>(List.of("Adventures", "Action"))
+////			));
+//	}
 
 	@Override
 	public List<Movie> getMovies() {
@@ -33,57 +40,49 @@ public class MovieService implements MovieServiceInterface {
 	}
 
 	@Override
-	public Movie getMovie(long id) {
+	public Movie getMovie(String id) {
 		
-		Movie ans=null;
+		if(ObjectUtils.isEmpty(movieMap.get(id)))
+		{
+			throw new IdNotFound("Hotel not found for id: "+id);
+		}
+		Movie movie = movieMap.get(id);
 		
-		for(int i=0;i<moviesList.size();i++) {
-			if(moviesList.get(i).id==id) {
-				ans=moviesList.get(i);
-			}
-		}
-		if(ans==null) {
-			throw new IdNotFound("Id is Not Available");
-		}
-		return ans;
+		long updatedRating=ratingServiceCommunicator.getRating(id);
+		movie.setMovieRating(updatedRating);
+		return movie;
 	}
 
 	@Override
 	public void addMovie(Movie movie) {
-		long id1=movie.id;
-		for(int i=0;i<moviesList.size();i++) {
-			if(moviesList.get(i).id==id1) {
-				throw new IdNotFound("Id Already Exist");
-				
-			}
-		}
-		moviesList.add(movie);
+		Map<String, Long> ratingsMap = new HashMap<>();
+		
+		moviesList.add(movie); 
+		movieMap.put(movie.getId(), movie);
+		ratingsMap.put(movie.getId(), movie.getMovieRating());
+		ratingServiceCommunicator.addRating(ratingsMap);
+	}
+		
+
+	@Override
+	public void deleteMovie(String id) {
+		Movie movie = getMovie(id);
+		moviesList.remove(movie);
+		movieMap.remove(id);
+		ratingServiceCommunicator.deleteRating(id);
 	}
 
 	@Override
-	public String deleteMovie(long id) {
-		for(int i=0;i<moviesList.size();i++) {
-			if(moviesList.get(i).id==id) {
-				moviesList.remove(i);
-				return "Success In Deletion";
-			}
-		}
-		return "";
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateMovie(Movie movie, long id) {
-		for(int i=0;i<moviesList.size();i++) {
-			if(moviesList.get(i).id==id) {
-				moviesList.remove(i);
-				moviesList.add(i, movie);				
-				return;
-			}
-		}
-		// TODO Auto-generated method stub
-
+	public void updateMovie(Movie movie, String id) {
+        Movie existingMovie= getMovie(id);
+		
+		moviesList.remove(existingMovie);
+		moviesList.add(movie);		
+		movieMap.put(id, movie);
+		
+		Map<String,Long> updatedRating = new HashMap<>();
+		updatedRating.put(id, movie.getMovieRating());
+		ratingServiceCommunicator.updateRating(updatedRating);
 	}
 
 }
