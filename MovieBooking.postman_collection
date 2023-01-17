@@ -1,0 +1,132 @@
+{
+	"info": {
+		"_postman_id": "3136ea53-0113-40bb-870b-4169575a7f9d",
+		"name": "MovieBooking Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24861335"
+	},
+	"item": [
+		{
+			"name": "Get All Movies",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/hotel/getAll",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"hotel",
+						"getAll"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get movies  by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/hotel/id/123",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"hotel",
+						"id",
+						"123"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Movies",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"131\",\n    \"name\": \"le casa Meridian\",\n    \"rating\": 4,\n    \"city\": \"Bangalore\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/hotel/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"hotel",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Movies By Id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/hotel/remove/id/131",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"hotel",
+						"remove",
+						"id",
+						"131"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Movies",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"1\",\n    \"movieName\": \"dd\",\n    \"movieDirector\": \"Joe Johnston\",\n    \"movieRating\": 5,\n    \"movieLanguage\": \"English\",\n    \"writers\": [\"Christopher Markus\"],\n    \"actors\": [\"Chris Evans\"],\n    \"genre\": [\"Adventures\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/ticket/update/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"ticket",
+						"update",
+						"3"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
